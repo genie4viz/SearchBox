@@ -1,31 +1,21 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 const SPEED = 0.01;
 
-export default class Header extends React.PureComponent {
-  state = { offset: 0 };
-  t0 = Date.now();
-  ref = React.createRef();
+export default function Header(props) {
+  const timeNow = Date.now();
+  const headerRef = useRef();
+  let frame;
 
-  componentDidMount() {
-    this.frame = requestAnimationFrame(this.animate);
-  }
+  const animate = () => {
+    requestAnimationFrame(animate);
 
-  componentWillUnmount() {
-    if (this.frame) {
-      cancelAnimationFrame(this.frame);
-    }
-  }
+    const text = props.children;
 
-  animate = () => {
-    requestAnimationFrame(this.animate);
-
-    const text = this.props.children;
-
-    const td = Date.now() - this.t0;
+    const td = Date.now() - timeNow;
     const offset = td * SPEED;
 
-    const h1 = this.ref.current;
+    const h1 = headerRef.current;
 
     if (!h1) {
       return;
@@ -42,7 +32,14 @@ export default class Header extends React.PureComponent {
     }
   };
 
-  render() {
-    return <h1 ref={this.ref} />;
-  }
+  useEffect(() => {
+    frame = requestAnimationFrame(animate);
+    return () => {
+      if (frame) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, []);
+
+  return <h1 ref={headerRef} />;
 }
