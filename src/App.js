@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { NameList, sendAnalyticsPing } from "./helpers";
-import Header from "./Header";
-import Description from "./Description";
 
 import {
     unstable_LowPriority,
@@ -9,6 +7,8 @@ import {
     unstable_runWithPriority,
     unstable_scheduleCallback
 } from "scheduler";
+
+import {ENABLE_CONCURRENT_AND_SCHEDULED} from './index';
 
 import "./App.css";
 
@@ -20,10 +20,8 @@ export default function App() {
 
     return (
         <div className="App">
-            <Header>ScheduleTron 3000</Header>
             <SearchBox onChange={handleChange} />
             <NameList searchValue={searchValue} />
-            <Description />
         </div>
     );
 }
@@ -34,14 +32,19 @@ function SearchBox(props) {
     const handleChange = event => {
         const value = event.target.value;
         const onChange = props.onChange;
+        if(ENABLE_CONCURRENT_AND_SCHEDULED){
 
-        setInputValue(value);
-
-        unstable_next(function () {
+            setInputValue(value);
+            unstable_next(function () {
+                onChange(value);
+            });
+            
+            sendDeferredAnalyticsPing(value);
+        }else{
+            setInputValue(value);
             onChange(value);
-        });
-
-        sendDeferredAnalyticsPing(value);
+            sendAnalyticsPing(value);
+        }
 
     };
 
