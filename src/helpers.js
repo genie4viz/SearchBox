@@ -37,14 +37,14 @@ export function Name({ name, searchValue }) {
 }
 
 export function sendAnalyticsPing(value) {
-  performance.mark("analytics-start");
+  // performance.mark("analytics-start");
   miningBitcoin(25);
-  performance.mark("analytics-end");
-  performance.measure(
-    "Analytics: " + value,
-    "analytics-start",
-    "analytics-end"
-  );
+  // performance.mark("analytics-end");
+  // performance.measure(
+  //   "Analytics: " + value,
+  //   "analytics-start",
+  //   "analytics-end"
+  // );
 }
 
 function miningBitcoin(ms) {
